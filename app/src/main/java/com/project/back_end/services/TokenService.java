@@ -57,48 +57,27 @@ public class TokenService {
 
     public boolean validateToken(String token,String user) {
         try {
-            String extracted = extractEmail(token);
-            if(user.equals("admin"))
-            {
-                Admin admin =adminRepository.findByUsername(extracted);
-                if(admin!=null)
-                {
-                    return true;
-                }
-            }
-            else if(user.equals("doctor"))
-            {
-                Doctor doctor=doctorRepository.findByEmail(extracted);
-                if(doctor!=null)
-                {
-                    return true;
-                }
-            }
-            else if(user.equals("patient"))
-            {
-                Patient patient=patientRepository.findByEmail(extracted);
-                if(patient!=null)
-                {
-                    return true;
-                }
-            }
+            //extractEmail
+            String identifier = extractEmail(token);
+            if (identifier == null)
+                return false;
 
-            return false;
+            switch (user.toLowerCase()) {
+                // case admin
+                case "admin":
+                    return adminRepository.findByUsername(identifier) != null;
+                // case doctor
+                case "doctor":
+                    return doctorRepository.findByEmail(identifier) != null;
+                // case patient
+                case "patient":
+                    return patientRepository.findByEmail(identifier) != null;
+                default:
+                    return false;
+            }
         } catch (Exception e) {
             return false;
         }
-    }
-    
-    public String extractEmailFromToken(String token) {
-        throw new UnsupportedOperationException("Unimplemented method 'extractEmailFromToken'");
-    }
-
-    public String generateToken(Object object, String string, String username) {
-        throw new UnsupportedOperationException("Unimplemented method 'generateToken'");
-    }
-
-    public Long extractDoctorIdFromToken(String token) {
-        throw new UnsupportedOperationException("Unimplemented method 'extractDoctorIdFromToken'");
     }
 
 }
